@@ -1,6 +1,6 @@
 {
   "name": "frontm8er",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A tool to add frontmatter to markdown files",
   "main": "src/index.js",
   "bin": {
