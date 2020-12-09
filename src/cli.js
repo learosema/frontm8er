@@ -109,7 +109,7 @@ resolveDataFiles.then((files) => {
       if (options.addCreated || options.addModified) {
         const stats = fs.statSync(inputFile);
         if (options.addCreated) {
-          fileData['created'] = stats.ctime.toISOString();
+          fileData['created'] = stats.birthtime.toISOString();
         }
         if (options.addModified) {
           fileData['modified'] = stats.mtime.toISOString();
