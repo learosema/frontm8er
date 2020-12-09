@@ -98,13 +98,14 @@ resolveDataFiles.then((files) => {
       let content = fs.readFileSync(inputFile, 'utf-8');
       const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
       const marker = '---' + eol;
-      const fileData = { ...data };
+      const fileData = {};
       if (content.startsWith(marker)) {
         const frontMatterEnd = content.indexOf(marker, marker.length);
         const frontMatter = content.slice(marker.length, frontMatterEnd);
         content = content.slice(frontMatterEnd + marker.length);
         Object.assign(fileData, yaml.parse(frontMatter));
       }
+      Object.assign(fileData, data);
       if (options.addCreated || options.addModified) {
         const stats = fs.statSync(inputFile);
         if (options.addCreated) {
