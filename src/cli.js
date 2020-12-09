@@ -97,7 +97,7 @@ resolveDataFiles.then((files) => {
     inputFiles.flat().forEach((inputFile) => {
       let content = fs.readFileSync(inputFile, 'utf-8');
       const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
-      const marker = '===' + eol;
+      const marker = '---' + eol;
       const fileData = { ...data };
       if (content.startsWith(marker)) {
         const frontMatterEnd = content.indexOf(marker, marker.length);
@@ -117,9 +117,9 @@ resolveDataFiles.then((files) => {
       const hasData = Object.keys(fileData).length > 0;
       if (hasData) {
         const frontmatter = (
-          '===\n' +
+          '---\n' +
           yaml.stringify(fileData) +
-          '===\n'
+          '---\n'
         ).replace(/\n/g, eol);
         content = frontmatter + content;
       }
