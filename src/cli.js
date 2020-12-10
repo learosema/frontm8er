@@ -4,6 +4,7 @@ const fs = require('fs');
 const yaml = require('yaml');
 const glob = require('glob');
 const json5 = require('json5');
+const { promisify } = require('util');
 
 const args = process.argv.slice(2);
 const data = {};
@@ -50,36 +51,17 @@ args
       const key = item.slice(2, eqSign);
       const val = item.slice(eqSign + 1);
       data[key] = val;
+      return;
     }
     console.error('Unkown option:', item);
   });
 
 const resolveDataFiles = Promise.all(
-  dataFiles.map((item) => {
-    return new Promise((resolve, reject) => {
-      glob(item, (err, files) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(files);
-      });
-    });
-  })
+  dataFiles.map((item) => promisify(glob)(item))
 );
 
 const resolveInputFiles = Promise.all(
-  inputFiles.map((item) => {
-    return new Promise((resolve, reject) => {
-      glob(item, (err, files) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        resolve(files);
-      });
-    });
-  })
+  inputFiles.map((item) => promisify(glob)(item))
 );
 
 resolveDataFiles.then((files) => {
