@@ -1,4 +1,4 @@
-const { readDataFiles } = require('./data');
+const { readDataFiles } = require('./data-parser');
 
 describe('readDataFiles test', () => {
   test('readDataFiles reads all resolved files from provided file patterns', async () => {
@@ -7,7 +7,7 @@ describe('readDataFiles test', () => {
       'test/*.json',
       'test/*.yml',
       'test/*.json5',
-      'test/*.md',
+      'test/*.txt',
     ]);
     const data = {};
     Object.assign.apply(this, [data, ...datas]);

@@ -1,9 +1,9 @@
-const { Markdown } = require('./markdown');
+const { MatterParser } = require('./matter-parser');
 const fsp = require('fs').promises;
 
-describe('Markdown parsing', () => {
-  test('Markdown.fromFile loads a file from the file system', async () => {
-    const file = await Markdown.fromFile('test/lea.md');
+describe('MatterParser parsing', () => {
+  test('MatterParser.fromFile loads a file from the file system', async () => {
+    const file = await MatterParser.fromFile('test/lea.md');
     expect(file.fileName).toBe('test/lea.md');
     expect(file.metaData.author).toBe('Lea Rosema');
     expect(file.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
@@ -12,24 +12,24 @@ describe('Markdown parsing', () => {
     );
   });
 
-  test('Markdown.fromFile uses linux format if the file contains no EOLs', async () => {
+  test('MatterParser.fromFile uses linux format if the file contains no EOLs', async () => {
     const readFile = fsp.readFile;
     fsp.readFile = jest.fn().mockImplementation(() => Promise.resolve('test'));
-    const file = await Markdown.fromFile('test/no-data-no-eol.md');
+    const file = await MatterParser.fromFile('test/no-data-no-eol.md');
     expect(file.eol).toBe('\n');
     fsp.readFile = readFile;
   });
 
-  test('Markdown.fromFile metaData object is empty when file has no front matter', async () => {
+  test('MatterParser.fromFile metaData object is empty when file has no front matter', async () => {
     const readFile = fsp.readFile;
     fsp.readFile = jest.fn().mockImplementation(() => Promise.resolve('test'));
-    const file = await Markdown.fromFile('test/no-data-no-eol.md');
+    const file = await MatterParser.fromFile('test/no-data-no-eol.md');
     expect(Object.keys(file.metaData).length).toBe(0);
     fsp.readFile = readFile;
   });
 
-  test('Markdown.withData creates a new Markdown instance with additional data to the data object', async () => {
-    const file = await Markdown.fromFile('test/lea.md');
+  test('MatterParser.withData creates a new MatterParser instance with additional data to the data object', async () => {
+    const file = await MatterParser.fromFile('test/lea.md');
     const newFile = file.withData({ favoriteColour: 'hotpink' });
     expect(newFile.metaData.author).toBe('Lea Rosema');
     expect(newFile.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
@@ -37,8 +37,8 @@ describe('Markdown parsing', () => {
     expect(file.metaData.favoriteColour).toBeUndefined();
   });
 
-  test('Markdown.toString serializes markdown file correctly', () => {
-    const md = new Markdown(
+  test('MatterParser.toString serializes MatterParser file correctly', () => {
+    const md = new MatterParser(
       'test.md',
       { author: 'Lea Rosema' },
       'Hello World\n'
@@ -47,16 +47,16 @@ describe('Markdown parsing', () => {
     expect(md.toString()).toBe(mdString);
   });
 
-  test('Markdown.toString serializes just the content if metaData is empty', () => {
-    const md = new Markdown('test.md', {}, 'Hello World\n');
+  test('MatterParser.toString serializes just the content if metaData is empty', () => {
+    const md = new MatterParser('test.md', {}, 'Hello World\n');
     const mdString = 'Hello World\n';
     expect(md.toString()).toBe(mdString);
   });
 
-  test('Markdown.save saves all the things', async () => {
+  test('MatterParser.save saves all the things', async () => {
     const writeFile = fsp.writeFile;
     fsp.writeFile = jest.fn().mockImplementation(() => Promise.resolve());
-    const md = new Markdown(
+    const md = new MatterParser(
       'test.md',
       { author: 'Lea Rosema' },
       'Hello World\n'
@@ -66,8 +66,8 @@ describe('Markdown parsing', () => {
     fsp.writeFile = writeFile;
   });
 
-  test('Markdown.fromFilePatterns can batch-read all the markdown files', async () => {
-    const files = await Markdown.fromFilePatterns(['test/*.md']);
+  test('MatterParser.fromFilePatterns can batch-read all the MatterParser files', async () => {
+    const files = await MatterParser.fromFilePatterns(['test/*.md']);
     expect(files.length).toBe(1);
     expect(files[0].fileName).toBe('test/lea.md');
     expect(files[0].metaData.author).toBe('Lea Rosema');

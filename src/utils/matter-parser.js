@@ -6,7 +6,7 @@ const { promisify } = require('util');
 /**
  * Class for parsing a markdown file into frontmatter and content
  */
-class Markdown {
+class MatterParser {
   /**
    * Creates a markdown file instance
    * @param {string} fileName the file name
@@ -24,7 +24,7 @@ class Markdown {
   /**
    * Read file
    * @param {string} fileName the file name
-   * @returns {Promise<Markdown>} the markdown instance
+   * @returns {Promise<MatterParser>} the parser instance
    */
   static async fromFile(fileName) {
     let content = await fsp.readFile(fileName, 'utf-8');
@@ -40,11 +40,11 @@ class Markdown {
       content = content.slice(frontMatterEnd + marker.length);
       Object.assign(metaData, yaml.parse(frontMatter));
     }
-    return new Markdown(fileName, metaData, content, eol);
+    return new MatterParser(fileName, metaData, content, eol);
   }
 
   /**
-   * Resolves all markdown files from an array of file patterns
+   * Resolves all frontmatter files from an array of file patterns
    *
    * @param {string[]} inputFilePatterns array of file patterns, eg ['README.md','src/*.md']
    * @returns {object[]} Array of objects containing {fileName, metaData, content}
@@ -55,13 +55,13 @@ class Markdown {
     );
     const inputFiles = (await resolveInputFiles).flat();
     return await Promise.all(
-      inputFiles.map((fileName) => Markdown.fromFile(fileName))
+      inputFiles.map((fileName) => MatterParser.fromFile(fileName))
     );
   }
 
   withData(data) {
     const { metaData, content, fileName, eol } = this;
-    return new Markdown(fileName, { ...metaData, ...data }, content, eol);
+    return new MatterParser(fileName, { ...metaData, ...data }, content, eol);
   }
 
   toString() {
@@ -81,4 +81,4 @@ class Markdown {
   }
 }
 
-module.exports = { Markdown };
+module.exports = { MatterParser };
