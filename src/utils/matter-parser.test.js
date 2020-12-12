@@ -28,6 +28,13 @@ describe('MatterParser parsing', () => {
     fsp.readFile = readFile;
   });
 
+  test('MatterParser.fromString parses string into MatterParser instance', () => {
+    const content = '---\nauthor: Lea Rosema\n---\nHello World!\n';
+    const md = MatterParser.fromString(content);
+    expect(md.metaData.author).toBe('Lea Rosema');
+    expect(md.content).toBe('Hello World!\n');
+  });
+
   test('MatterParser.withData creates a new MatterParser instance with additional data to the data object', async () => {
     const file = await MatterParser.fromFile('test/lea.md');
     const newFile = file.withData({ favoriteColour: 'hotpink' });

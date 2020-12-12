@@ -2,15 +2,21 @@ const fsp = require('fs').promises;
 const { readDataFiles } = require('./utils/data-parser');
 const { MatterParser } = require('./utils/matter-parser');
 
-export async function getFileTimes() {
-  const stats = await fsp.stat(md.fileName);
-  return {
-    created: stats.birthtime.toISOString(),
-    modified: stats.mtime.toISOString()
-  };
+async function getFileTimes(fileName, addCreated, addModified) {
+  const result = {};
+  if (!addCreated && !addModified) {
+    return result;
+  }
+  const stats = await fsp.stat(fileName);
+  if (addCreated) {
+    result.created = stats.birthtime.toISOString();
+  }
+  if (addModified) {
+    result.modified = stats.mtime.toISOString();
+  }
 }
 
-function processFrontmatterFiles({
+async function processFrontmatterFiles({
   inputFilePatterns,
   dataFilePatterns,
   data = {},
@@ -18,20 +24,15 @@ function processFrontmatterFiles({
   addModified = false,
 }) {
   const dataContents = await readDataFiles(dataFilePatterns);
-  Object.assign.apply(this, [data, ...dataContents]);
+  const fileData = Object.assign.apply(this, [{}, ...dataContents]);
   const inputContents = await MatterParser.fromFilePatterns(inputFilePatterns);
   await Promise.all(
     inputContents.map(async (md) => {
-      const additionalData = { ...data };
-      if (addCreated || addModified) {
-        const times = await getFileTimes();
-        if (addCreated) {
-          additionalData.created = times.created;
-        }
-        if (addModified) {
-          additionalData.modified = times.modified;
-        }
-      }
+      const additionalData = {
+        ...fileData,
+        ...data,
+        ...getFileTimes(md.fileName, addCreated, addModified),
+      };
       return await md.withData(additionalData).save();
     })
   );

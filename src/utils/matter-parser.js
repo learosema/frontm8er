@@ -27,20 +27,34 @@ class MatterParser {
    * @returns {Promise<MatterParser>} the parser instance
    */
   static async fromFile(fileName) {
-    let content = await fsp.readFile(fileName, 'utf-8');
+    const content = await fsp.readFile(fileName, 'utf-8');
+    return MatterParser.fromString(content, fileName);
+  }
+
+  /**
+   * Read file from string
+   * @param {string} content contents of the frontmatter file
+   * @returns {MatterParser} the parser instance
+   */
+  static fromString(content, fileName = 'output.md') {
     // determine line endings by looking at the first appearance of \n or \r\n
     const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
     // normalize line endings in case of mixed LF/CRLF
-    content = content.replace(/\n|\r\n/g, eol);
+    let normalizedContent = content.replace(/\n|\r\n/g, eol);
     const marker = '---' + eol;
     const metaData = {};
-    if (content.startsWith(marker)) {
-      const frontMatterEnd = content.indexOf(marker, marker.length);
-      const frontMatter = content.slice(marker.length, frontMatterEnd);
-      content = content.slice(frontMatterEnd + marker.length);
+    if (normalizedContent.startsWith(marker)) {
+      const frontMatterEnd = normalizedContent.indexOf(marker, marker.length);
+      const frontMatter = normalizedContent.slice(
+        marker.length,
+        frontMatterEnd
+      );
+      normalizedContent = normalizedContent.slice(
+        frontMatterEnd + marker.length
+      );
       Object.assign(metaData, yaml.parse(frontMatter));
     }
-    return new MatterParser(fileName, metaData, content, eol);
+    return new MatterParser(fileName, metaData, normalizedContent, eol);
   }
 
   /**
