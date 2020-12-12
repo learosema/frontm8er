@@ -39,4 +39,4 @@ async function processFrontmatterFiles({
   );
 }
 
-module.exports = { getFileTimes, processFrontmatterFiles };
+module.exports = { processFrontmatterFiles };

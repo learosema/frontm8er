@@ -17,7 +17,7 @@ function displayHelp() {
   help.forEach((item) => console.log(item));
 }
 
-const options = parseCLI(process.argv[2]);
+const options = parseCLI(process.argv.slice(2));
 if (!options) {
   displayHelp();
   return;
