@@ -14,6 +14,7 @@ async function getFileTimes(fileName, addCreated, addModified) {
   if (addModified) {
     result.modified = stats.mtime.toISOString();
   }
+  return result;
 }
 
 async function processFrontmatterFiles({
@@ -31,7 +32,7 @@ async function processFrontmatterFiles({
       const additionalData = {
         ...fileData,
         ...data,
-        ...getFileTimes(md.fileName, addCreated, addModified),
+        ...(await getFileTimes(md.fileName, addCreated, addModified)),
       };
       return await md.withData(additionalData).save();
     })

@@ -54,6 +54,12 @@ describe('MatterParser parsing', () => {
     expect(md.toString()).toBe(mdString);
   });
 
+  test('MatterParser.fromString without parameters creates instance with empty content and metadata.', () => {
+    const md = MatterParser.fromString();
+    expect(md.content).toBe('');
+    expect(md.metaData).toStrictEqual({});
+  });
+
   test('MatterParser.toString serializes just the content if metaData is empty', () => {
     const md = new MatterParser('test.md', {}, 'Hello World\n');
     const mdString = 'Hello World\n';

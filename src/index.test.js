@@ -33,7 +33,7 @@ describe('processFrontmatterFiles tests', () => {
       addModified: false,
     });
     expect(virtualFS['test/lea.md']).toBeDefined();
-    const md = MatterParser.fromString(virtualFS['test/lea']);
+    const md = MatterParser.fromString(virtualFS['test/lea.md']);
     expect(md.metaData.author).toBe('Lea Rosema');
     expect(md.metaData.gender).toBe('female');
     expect(md.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
@@ -51,13 +51,13 @@ describe('processFrontmatterFiles tests', () => {
         'test/*.yml',
         'test/*.json5',
       ],
-      data: { author: 'Lea Rosema' },
+      data: { author: 'terabaud' },
       addCreated: true,
       addModified: true,
     });
     expect(virtualFS['test/lea.md']).toBeDefined();
-    const md = MatterParser.fromString(virtualFS['test/lea']);
-    expect(md.metaData.author).toBe('Lea Rosema');
+    const md = MatterParser.fromString(virtualFS['test/lea.md']);
+    expect(md.metaData.author).toBe('terabaud');
     expect(md.metaData.gender).toBe('female');
     expect(md.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
     expect(md.content).toBe(
@@ -81,7 +81,7 @@ describe('processFrontmatterFiles tests', () => {
       addModified: true,
     });
     expect(virtualFS['test/lea.md']).toBeDefined();
-    const md = MatterParser.fromString(virtualFS['test/lea']);
+    const md = MatterParser.fromString(virtualFS['test/lea.md']);
     expect(md.metaData.author).toBe('Lea Rosema');
     expect(md.metaData.gender).toBe('female');
     expect(md.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
@@ -105,7 +105,7 @@ describe('processFrontmatterFiles tests', () => {
       addModified: false,
     });
     expect(virtualFS['test/lea.md']).toBeDefined();
-    const md = MatterParser.fromString(virtualFS['test/lea']);
+    const md = MatterParser.fromString(virtualFS['test/lea.md']);
     expect(md.metaData.author).toBe('Lea Rosema');
     expect(md.metaData.gender).toBe('female');
     expect(md.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
@@ -113,5 +113,25 @@ describe('processFrontmatterFiles tests', () => {
       '\n# Hello World!\n\nLorem ipsum dolor sit amet.\n'
     );
     expect(md.metaData.created).toBeDefined();
+  });
+
+  test('processFrontmatterFiles does the things it should do. No extra data.', async () => {
+    await processFrontmatterFiles({
+      inputFilePatterns: ['test/*.md'],
+      dataFilePatterns: [
+        'test/*.yaml',
+        'test/*.json',
+        'test/*.yml',
+        'test/*.json5',
+      ],
+    });
+    expect(virtualFS['test/lea.md']).toBeDefined();
+    const md = MatterParser.fromString(virtualFS['test/lea.md']);
+    expect(md.metaData.author).toBe('Lea Rosema');
+    expect(md.metaData.gender).toBe('female');
+    expect(md.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
+    expect(md.content).toBe(
+      '\n# Hello World!\n\nLorem ipsum dolor sit amet.\n'
+    );
   });
 });

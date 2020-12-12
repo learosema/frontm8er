@@ -36,7 +36,7 @@ class MatterParser {
    * @param {string} content contents of the frontmatter file
    * @returns {MatterParser} the parser instance
    */
-  static fromString(content, fileName = 'output.md') {
+  static fromString(content = '', fileName = 'output.md') {
     // determine line endings by looking at the first appearance of \n or \r\n
     const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
     // normalize line endings in case of mixed LF/CRLF
