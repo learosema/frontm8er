@@ -90,8 +90,8 @@ class MatterParser {
     return frontMatter + content;
   }
 
-  async save() {
-    return await fsp.writeFile(this.fileName, this.toString(), 'utf-8');
+  save() {
+    return fsp.writeFile(this.fileName, this.toString(), 'utf8');
   }
 }
 
