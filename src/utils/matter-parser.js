@@ -34,6 +34,7 @@ class MatterParser {
   /**
    * Read file from string
    * @param {string} content contents of the frontmatter file
+   * @param {string} fileName the fileName to be used when saved
    * @returns {MatterParser} the parser instance
    */
   static fromString(content = '', fileName = 'output.md') {
