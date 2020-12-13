@@ -2,6 +2,7 @@ const yaml = require('yaml');
 const fsp = require('fs').promises;
 const glob = require('glob');
 const { promisify } = require('util');
+const { EOL } = require('os');
 
 /**
  * Class for parsing a markdown file into frontmatter and content
@@ -14,7 +15,7 @@ class MatterParser {
    * @param {string} content the content body
    * @param {string} eol the line-ending style used (\n or \r\n)
    */
-  constructor(fileName, metaData, content, eol = '\n') {
+  constructor(fileName, metaData, content, eol = EOL) {
     this.fileName = fileName;
     this.metaData = metaData;
     this.content = content;
@@ -27,7 +28,7 @@ class MatterParser {
    * @returns {Promise<MatterParser>} the parser instance
    */
   static async fromFile(fileName) {
-    const content = await fsp.readFile(fileName, 'utf-8');
+    const content = await fsp.readFile(fileName, 'utf8');
     return MatterParser.fromString(content, fileName);
   }
 
@@ -39,7 +40,7 @@ class MatterParser {
    */
   static fromString(content = '', fileName = 'output.md') {
     // determine line endings by looking at the first appearance of \n or \r\n
-    const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
+    const eol = (content.match(/\n|\r\n/) || [EOL])[0];
     // normalize line endings in case of mixed LF/CRLF
     let normalizedContent = content.replace(/\n|\r\n/g, eol);
     const marker = '---' + eol;
