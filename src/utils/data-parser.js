@@ -17,7 +17,7 @@ async function readDataFiles(dataFilePatterns) {
   const dataFiles = (await resolveDataFiles).flat();
   const dataContents = dataFiles.flat().map(async (item) => {
     const content = await fs.readFile(item, 'utf-8');
-    if (/\.y(a|)ml$/.test(item)) {
+    if (/\.ya?ml$/.test(item)) {
       return yaml.parse(content);
     }
     if (/\.json5?$/.test(item)) {
