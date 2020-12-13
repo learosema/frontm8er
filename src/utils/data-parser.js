@@ -20,7 +20,7 @@ async function readDataFiles(dataFilePatterns) {
     if (/\.y(a|)ml$/.test(item)) {
       return yaml.parse(content);
     }
-    if (/\.json(5|)$/.test(item)) {
+    if (/\.json5?$/.test(item)) {
       return json5.parse(content);
     }
     return {};
