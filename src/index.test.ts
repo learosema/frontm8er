@@ -1,6 +1,7 @@
-const fsp = require('fs').promises;
-const { processFrontmatterFiles } = require('./index');
-const { MatterParser } = require('./utils/matter-parser');
+import { promises as fsp } from 'fs';
+
+import { processFrontmatterFiles } from './index';
+import { MatterParser } from './utils/matter-parser';
 
 let originalWriteFile,
   virtualFS = {};

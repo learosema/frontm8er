@@ -1,26 +1,26 @@
-const yaml = require('yaml');
-const fsp = require('fs').promises;
-const glob = require('glob');
-const { promisify } = require('util');
-const { EOL } = require('os');
+import yaml from 'yaml';
+import { promises as fsp } from 'fs';
+import glob from 'glob';
+import { promisify } from 'util';
+import { EOL } from 'os';
 
 /**
  * Class for parsing a markdown file into frontmatter and content
  */
-class MatterParser {
+export class MatterParser {
   /**
    * Creates a markdown file instance
-   * @param {string} fileName the file name
-   * @param {object} metaData the parsed frontmatter
-   * @param {string} content the content body
-   * @param {string} eol the line-ending style used (\n or \r\n)
+   * @param fileName the file name
+   * @param metaData the parsed frontmatter
+   * @param content the content body
+   * @param eol the line-ending style used (\n or \r\n)
    */
-  constructor(fileName, metaData, content, eol = EOL) {
-    this.fileName = fileName;
-    this.metaData = metaData;
-    this.content = content;
-    this.eol = eol;
-  }
+  constructor(
+    public fileName: string,
+    public metaData: object,
+    public content: string,
+    public eol = EOL
+  ) {}
 
   /**
    * Read file
@@ -67,8 +67,11 @@ class MatterParser {
    */
   static async fromFilePatterns(filePatterns) {
     const resolveInputFiles = Promise.all(
-      filePatterns.map((item) => promisify(glob)(item))
+      filePatterns.map(
+        (item: string) => promisify(glob)(item) as Promise<string[]>
+      )
     );
+
     const inputFiles = (await resolveInputFiles).flat();
     return await Promise.all(
       inputFiles.map((fileName) => MatterParser.fromFile(fileName))
@@ -96,5 +99,3 @@ class MatterParser {
     return fsp.writeFile(this.fileName, this.toString(), 'utf8');
   }
 }
-
-module.exports = { MatterParser };

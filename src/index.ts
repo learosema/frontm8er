@@ -1,9 +1,10 @@
-const fsp = require('fs').promises;
-const { readDataFiles } = require('./utils/data-parser');
-const { MatterParser } = require('./utils/matter-parser');
+import { promises as fsp } from 'fs';
+
+import { readDataFiles } from './utils/data-parser';
+import { MatterParser } from './utils/matter-parser';
 
 async function getFileTimes(fileName, addCreated, addModified) {
-  const result = {};
+  const result: Record<string, string> = {};
   if (!addCreated && !addModified) {
     return result;
   }
@@ -17,16 +18,21 @@ async function getFileTimes(fileName, addCreated, addModified) {
   return result;
 }
 
-async function processFrontmatterFiles({
+/**
+ * Process front matter files
+ */
+export async function processFrontmatterFiles({
   inputFilePatterns,
   dataFilePatterns,
   data = {},
   addCreated = false,
   addModified = false,
-}) {
-  const dataContents = await readDataFiles(dataFilePatterns);
-  const fileData = Object.assign.apply(this, [{}, ...dataContents]);
-  const inputContents = await MatterParser.fromFilePatterns(inputFilePatterns);
+}): Promise<void> {
+  const dataContents: object[] = await readDataFiles(dataFilePatterns);
+  const fileData: object = Object.assign.apply(this, [{}, ...dataContents]);
+  const inputContents: MatterParser[] = await MatterParser.fromFilePatterns(
+    inputFilePatterns
+  );
   await Promise.all(
     inputContents.map(async (md) => {
       const additionalData = {
@@ -38,5 +44,3 @@ async function processFrontmatterFiles({
     })
   );
 }
-
-module.exports = { processFrontmatterFiles };
