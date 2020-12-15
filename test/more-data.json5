@@ -1,0 +1,4 @@
+{
+  // it also supports json5
+  gender: 'female',
+}

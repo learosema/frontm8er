@@ -1,1 +1,4 @@
 node_modules
+coverage
+Thumbs.db
+.DS_Store
