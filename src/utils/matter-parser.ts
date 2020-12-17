@@ -17,7 +17,7 @@ export class MatterParser {
    */
   constructor(
     public fileName: string,
-    public metaData: object,
+    public metaData: Record<string, any>,
     public content: string,
     public eol = EOL
   ) {}

@@ -1,23 +1,22 @@
 import { promises as fsp } from 'fs';
-
+import { mocked } from 'ts-jest/utils';
 import { processFrontmatterFiles } from './index';
 import { MatterParser } from './utils/matter-parser';
 
-let originalWriteFile,
-  virtualFS = {};
+let originalWriteFile: Function;
+let virtualFS: Record<string, string> = {};
 
 describe('processFrontmatterFiles tests', () => {
   beforeEach(() => {
-    originalWriteFile = fsp.writeFile;
     virtualFS = {};
-    fsp.writeFile = jest.fn().mockImplementation((file, contents) => {
-      virtualFS[file] = contents;
-      Promise.resolve();
+    mocked(fsp.writeFile).mockImplementation((file, contents) => {
+      virtualFS[(file as string)] = contents as string;
+      return Promise.resolve();
     });
   });
 
   afterEach(() => {
-    fsp.writeFile = originalWriteFile;
+    mocked(fsp.writeFile).mockClear();
   });
 
   test('processFrontmatterFiles does the things it should do.', async () => {
