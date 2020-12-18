@@ -24,21 +24,21 @@ export class MatterParser {
 
   /**
    * Read file
-   * @param {string} fileName the file name
-   * @returns {Promise<MatterParser>} the parser instance
+   * @param fileName the file name
+   * @returns the parser instance
    */
-  static async fromFile(fileName) {
+  static async fromFile(fileName: string): Promise<MatterParser> {
     const content = await fsp.readFile(fileName, 'utf8');
     return MatterParser.fromString(content, fileName);
   }
 
   /**
    * Read file from string
-   * @param {string} content contents of the frontmatter file
-   * @param {string} fileName the fileName to be used when saved
+   * @param content contents of the frontmatter file
+   * @param fileName the fileName to be used when saved
    * @returns {MatterParser} the parser instance
    */
-  static fromString(content = '', fileName = 'output.md') {
+  static fromString(content = '', fileName = 'output.md'): MatterParser {
     // determine line endings by looking at the first appearance of \n or \r\n
     const eol = (content.match(/\n|\r\n/) || [EOL])[0];
     // normalize line endings in case of mixed LF/CRLF
@@ -62,10 +62,12 @@ export class MatterParser {
   /**
    * Resolves all frontmatter files from an array of file patterns
    *
-   * @param {string[]} inputFilePatterns array of file patterns, eg ['README.md','src/*.md']
-   * @returns {object[]} Array of objects containing {fileName, metaData, content}
+   * @param inputFilePatterns array of file patterns, eg ['README.md','src/*.md']
+   * @returns Array of MatterParser instances
    */
-  static async fromFilePatterns(filePatterns) {
+  static async fromFilePatterns(
+    filePatterns: string[]
+  ): Promise<MatterParser[]> {
     const resolveInputFiles = Promise.all(
       filePatterns.map(
         (item: string) => promisify(glob)(item) as Promise<string[]>
@@ -78,12 +80,19 @@ export class MatterParser {
     );
   }
 
-  withData(data) {
+  /**
+   * Creates a clone of the instance and additionally adds data
+   * @param data any data to be added to the file
+   */
+  withData(data: Record<string, any>): MatterParser {
     const { metaData, content, fileName, eol } = this;
     return new MatterParser(fileName, { ...metaData, ...data }, content, eol);
   }
 
-  toString() {
+  /**
+   * Serializes the instance to string
+   */
+  toString(): string {
     const { content, metaData, eol } = this;
     if (Object.keys(metaData).length === 0) {
       return content;
@@ -95,7 +104,10 @@ export class MatterParser {
     return frontMatter + content;
   }
 
-  save() {
+  /**
+   * Save the file.
+   */
+  save(): Promise<void> {
     return fsp.writeFile(this.fileName, this.toString(), 'utf8');
   }
 }

@@ -1,29 +1,34 @@
-const { parseCLI } = require('./cli-parser');
+import { parseCLI } from './cli-parser';
 
 describe('cli parser test', () => {
   test('input files', () => {
     const options = parseCLI(['data.json', '*.md']);
-    expect(options.inputFilePatterns).toEqual(['*.md']);
-    expect(options.dataFilePatterns).toEqual(['data.json']);
+    expect(options).not.toBeNull();
+    expect(options?.inputFilePatterns).toEqual(['*.md']);
+    expect(options?.dataFilePatterns).toEqual(['data.json']);
   });
 
   test('--add-created option', () => {
     const o1 = parseCLI(['-c', 'data.json', '*.md']);
-    expect(o1.addCreated).toBe(true);
+    expect(o1).not.toBeNull();
+    expect(o1?.addCreated).toBe(true);
     const o2 = parseCLI(['--add-created', 'data.json', '*.md']);
-    expect(o2.addCreated).toBe(true);
+    expect(o2).not.toBeNull();
+    expect(o2?.addCreated).toBe(true);
   });
 
   test('--add-modified option', () => {
     const o1 = parseCLI(['-m', 'data.json', '*.md']);
-    expect(o1.addModified).toBe(true);
+    expect(o1).not.toBeNull();
+    expect(o1?.addModified).toBe(true);
     const o2 = parseCLI(['--add-modified', 'data.json', '*.md']);
-    expect(o2.addModified).toBe(true);
+    expect(o2).not.toBeNull();
+    expect(o2?.addModified).toBe(true);
   });
 
   test('--key=value option', () => {
     const options = parseCLI(['--key=value', 'data.json', '*.md']);
-    expect(options.data).toStrictEqual({ key: 'value' });
+    expect(options?.data).toStrictEqual({ key: 'value' });
   });
 
   test('no input files', () => {

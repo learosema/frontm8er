@@ -10,7 +10,7 @@ describe('processFrontmatterFiles tests', () => {
   beforeEach(() => {
     virtualFS = {};
     mocked(fsp.writeFile).mockImplementation((file, contents) => {
-      virtualFS[(file as string)] = contents as string;
+      virtualFS[file as string] = contents as string;
       return Promise.resolve();
     });
   });

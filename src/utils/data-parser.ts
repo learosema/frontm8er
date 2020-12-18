@@ -10,7 +10,9 @@ const { promisify } = require('util');
  * @param {string[]} dataFilePatterns array of file patterns, eg. ['*.json', '*.yaml']
  * @returns {object[]} array of parsed files
  */
-async function readDataFiles(dataFilePatterns) {
+export async function readDataFiles(
+  dataFilePatterns: string[]
+): Promise<any[]> {
   const resolveDataFiles = Promise.all(
     dataFilePatterns.map((item) => promisify(glob)(item))
   );
@@ -27,5 +29,3 @@ async function readDataFiles(dataFilePatterns) {
   });
   return await Promise.all(dataContents);
 }
-
-module.exports = { readDataFiles };

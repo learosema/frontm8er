@@ -1,11 +1,19 @@
+export type CliOptions = {
+  addCreated: boolean;
+  addModified: boolean;
+  data: Record<string, any>;
+  dataFilePatterns: string[];
+  inputFilePatterns: string[];
+};
+
 /**
  * Parse command line
- * @param {string[]} args arguments
+ * @param args arguments
  * @returns {object|null} options object or null if the user needs help
  */
-function parseCLI(args) {
+export function parseCLI(args: string[]): CliOptions | null {
   const dataFileExtensions = /\.(json|json5|yml|yaml)$/;
-  const options = {
+  const options: CliOptions = {
     addCreated: false,
     addModified: false,
     data: {},
@@ -47,5 +55,3 @@ function parseCLI(args) {
   }
   return options;
 }
-
-module.exports = { parseCLI };

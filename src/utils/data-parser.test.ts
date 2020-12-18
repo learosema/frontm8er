@@ -1,4 +1,4 @@
-const { readDataFiles } = require('./data-parser');
+import { readDataFiles } from './data-parser';
 
 describe('readDataFiles test', () => {
   test('readDataFiles reads all resolved files from provided file patterns', async () => {
@@ -9,8 +9,8 @@ describe('readDataFiles test', () => {
       'test/*.json5',
       'test/*.txt',
     ]);
-    const data = {};
-    Object.assign.apply(this, [data, ...datas]);
+    const data: Record<string, any> = {};
+    Object.assign.apply(null, [data, ...datas]);
     expect(data.author).toBe('Lea Rosema');
     expect(data.gender).toBe('female');
     expect(data.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);

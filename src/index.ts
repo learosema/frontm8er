@@ -3,7 +3,11 @@ import { promises as fsp } from 'fs';
 import { readDataFiles } from './utils/data-parser';
 import { MatterParser } from './utils/matter-parser';
 
-async function getFileTimes(fileName, addCreated, addModified) {
+async function getFileTimes(
+  fileName: string,
+  addCreated: boolean,
+  addModified: boolean
+): Promise<Record<string, string>> {
   const result: Record<string, string> = {};
   if (!addCreated && !addModified) {
     return result;
@@ -18,6 +22,14 @@ async function getFileTimes(fileName, addCreated, addModified) {
   return result;
 }
 
+export type processFrontMatterFilesArguments = {
+  inputFilePatterns: string[];
+  dataFilePatterns: string[];
+  data?: Record<string, any>;
+  addCreated?: boolean;
+  addModified?: boolean;
+};
+
 /**
  * Process front matter files
  */
@@ -27,9 +39,9 @@ export async function processFrontmatterFiles({
   data = {},
   addCreated = false,
   addModified = false,
-}): Promise<void> {
+}: processFrontMatterFilesArguments): Promise<void> {
   const dataContents: object[] = await readDataFiles(dataFilePatterns);
-  const fileData: object = Object.assign.apply(this, [{}, ...dataContents]);
+  const fileData: object = Object.assign.apply(null, [{}, ...dataContents]);
   const inputContents: MatterParser[] = await MatterParser.fromFilePatterns(
     inputFilePatterns
   );
