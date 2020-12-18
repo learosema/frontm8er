@@ -3,12 +3,12 @@ import { mocked } from 'ts-jest/utils';
 import { processFrontmatterFiles } from './index';
 import { MatterParser } from './utils/matter-parser';
 
-let originalWriteFile: Function;
 let virtualFS: Record<string, string> = {};
 
 describe('processFrontmatterFiles tests', () => {
   beforeEach(() => {
     virtualFS = {};
+    fsp.writeFile = jest.fn();
     mocked(fsp.writeFile).mockImplementation((file, contents) => {
       virtualFS[file as string] = contents as string;
       return Promise.resolve();
