@@ -52,6 +52,7 @@ export async function processFrontmatterFiles({
         ...data,
         ...(await getFileTimes(md.fileName, addCreated, addModified)),
       };
+      console.info(`processing ${md.fileName}`);
       return await md.withData(additionalData).save();
     })
   );
