@@ -10,7 +10,7 @@
     "frontm8er": "src/cli.js"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "ts-node src/index.js",
     "lint": "eslint src/**/*.js",
     "test": "jest --coverage"
   },
