@@ -1,6 +1,6 @@
 {
   "name": "frontm8er",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "engines": {
     "node": ">= 11.14.0"
   },
