@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { processFrontmatterFiles } from './index';
+import { processFrontmatterFiles } from './frontm8er';
 import { parseCLI } from './utils/cli-parser';
 
 function displayHelp(): void {

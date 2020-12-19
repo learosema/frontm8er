@@ -2,7 +2,6 @@ import yaml from 'yaml';
 import { promises as fsp } from 'fs';
 import glob from 'glob';
 import { promisify } from 'util';
-import { EOL } from 'os';
 
 /**
  * Class for parsing a markdown file into frontmatter and content
@@ -19,7 +18,7 @@ export class MatterParser {
     public fileName: string,
     public metaData: Record<string, any>,
     public content: string,
-    public eol = EOL
+    public eol = '\n'
   ) {}
 
   /**
@@ -40,7 +39,7 @@ export class MatterParser {
    */
   static fromString(content = '', fileName = 'output.md'): MatterParser {
     // determine line endings by looking at the first appearance of \n or \r\n
-    const eol = (content.match(/\n|\r\n/) || [EOL])[0];
+    const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
     // normalize line endings in case of mixed LF/CRLF
     let normalizedContent = content.replace(/\n|\r\n/g, eol);
     const marker = '---' + eol;

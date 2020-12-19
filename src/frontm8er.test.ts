@@ -1,6 +1,6 @@
 import { promises as fsp } from 'fs';
 import { mocked } from 'ts-jest/utils';
-import { processFrontmatterFiles } from './index';
+import { processFrontmatterFiles } from './frontm8er';
 import { MatterParser } from './utils/matter-parser';
 
 let virtualFS: Record<string, string> = {};
