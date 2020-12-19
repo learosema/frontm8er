@@ -1,5 +1,5 @@
-const { MatterParser } = require('./matter-parser');
-const fsp = require('fs').promises;
+import { promises as fsp } from 'fs';
+import { MatterParser } from './matter-parser';
 
 describe('MatterParser parsing', () => {
   test('MatterParser.fromFile loads a file from the file system', async () => {

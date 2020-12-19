@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-const { processFrontmatterFiles } = require('.');
-const { parseCLI } = require('./utils/cli-parser');
+import { processFrontmatterFiles } from './frontm8er';
+import { parseCLI } from './utils/cli-parser';
 
-function displayHelp() {
+function displayHelp(): void {
   const help = [
     '',
     'frontm8er [-c] [-m] [--key=value] [jsonfiles.json|yaml] [markdownfiles.md]',
@@ -17,9 +17,17 @@ function displayHelp() {
   help.forEach((item) => console.log(item));
 }
 
-const options = parseCLI(process.argv.slice(2));
-if (!options) {
-  displayHelp();
-  return;
+async function main(): Promise<void> {
+  const options = parseCLI(process.argv.slice(2));
+  if (!options) {
+    displayHelp();
+    process.exit(0);
+  }
+  try {
+    await processFrontmatterFiles(options);
+  } catch (err) {
+    console.error(err);
+  }
 }
-processFrontmatterFiles(options);
+
+main();
