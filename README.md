@@ -2,7 +2,7 @@
 
 Quick and dirty tool to add data to your markdown files.
 
-## Usage examples
+## CLI Usage
 
 ```sh
 npm i frontm8er -g
@@ -15,4 +15,18 @@ frontm8er -c -m --author="Lea Rosema" content/*.md
 
 # Pulls data from json file and adds it to the markdown file
 frontm8er data.json content/*.md
+```
+
+## API Usage
+
+```sh
+import { processFrontmatterFiles } from 'frontm8er';
+
+await processFrontmatterFiles({
+  inputFilePatterns: ['content/*.md'],
+  dataFilePatterns: ['content/data.json'],
+  data: {
+    author: 'Lea Rosema'
+  }
+});
 ```
