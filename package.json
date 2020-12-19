@@ -10,8 +10,8 @@
   "types": "dist/frontm8er.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/index.js",
-      "import": "./dist/index.mjs"
+      "require": "./dist/frontm8er.js",
+      "import": "./dist/frontm8er.mjs"
     }
   },
   "bin": {
