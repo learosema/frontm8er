@@ -3,6 +3,9 @@ import json5 from 'json5';
 import { promises as fsp } from 'fs';
 import glob from 'glob';
 import { promisify } from 'util';
+
+const DATA_PATTERN = /\.(json|json5|yml|yaml)$/;
+
 /**
  * Resolves all files from an array of file patterns
  *
@@ -17,6 +20,9 @@ export async function readDataFiles(
   );
   const dataFiles = (await resolveDataFiles).flat();
   const dataContents = dataFiles.flat().map(async (item) => {
+    if (!DATA_PATTERN.test(item)) {
+      return;
+    }
     const content = await fsp.readFile(item, 'utf-8');
     if (/\.ya?ml$/.test(item)) {
       return yaml.parse(content);
