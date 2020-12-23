@@ -75,7 +75,9 @@ export class MatterParser {
 
     const inputFiles = (await resolveInputFiles).flat();
     return await Promise.all(
-      inputFiles.map((fileName) => MatterParser.fromFile(fileName))
+      inputFiles
+        .filter((fileName) => fileName.endsWith('.md'))
+        .map((fileName) => MatterParser.fromFile(fileName))
     );
   }
 
