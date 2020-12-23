@@ -105,8 +105,13 @@ export class MatterParser {
 
   /**
    * Save the file.
+   *
+   * @param fileName new filename; if not provided, the file is overwritten
    */
-  save(): Promise<void> {
+  save(fileName?: string): Promise<void> {
+    if (fileName) {
+      this.fileName = fileName;
+    }
     return fsp.writeFile(this.fileName, this.toString(), 'utf8');
   }
 }

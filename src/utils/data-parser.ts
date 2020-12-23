@@ -28,3 +28,10 @@ export async function readDataFiles(
   });
   return await Promise.all(dataContents);
 }
+
+export async function readDataFilesToObject(
+  dataFilePatterns: string[]
+): Promise<Record<string, any>> {
+  const dataContents = await readDataFiles(dataFilePatterns);
+  return Object.assign.apply(null, [{}, ...dataContents]);
+}

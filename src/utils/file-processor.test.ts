@@ -1,7 +1,8 @@
 import { promises as fsp } from 'fs';
 import { mocked } from 'ts-jest/utils';
-import { processFrontmatterFiles } from './frontm8er';
-import { MatterParser } from './utils/matter-parser';
+
+import { processFrontmatterFiles } from './file-processor';
+import { MatterParser } from './matter-parser';
 
 let virtualFS: Record<string, string> = {};
 
@@ -10,7 +11,8 @@ describe('processFrontmatterFiles tests', () => {
     virtualFS = {};
     fsp.writeFile = jest.fn();
     mocked(fsp.writeFile).mockImplementation((file, contents) => {
-      virtualFS[file as string] = contents as string;
+      const fileName = (file.toString() || '').replace(/\/|\\/g, '/');
+      virtualFS[fileName] = contents as string;
       return Promise.resolve();
     });
   });
@@ -133,5 +135,26 @@ describe('processFrontmatterFiles tests', () => {
     expect(md.content).toBe(
       '\n# Hello World!\n\nLorem ipsum dolor sit amet.\n'
     );
+  });
+
+  test('processFrontmatterFiles does the things it should do. Also add created times. Write to dist', async () => {
+    await processFrontmatterFiles({
+      inputFilePatterns: ['*.md'],
+      dataFilePatterns: ['*.yaml', '*.json', '*.yml', '*.json5'],
+      data: { author: 'Lea Rosema' },
+      addCreated: true,
+      addModified: false,
+      inputFolder: 'test',
+      outputFolder: 'dist',
+    });
+    expect(virtualFS['dist/lea.md']).toBeDefined();
+    const md = MatterParser.fromString(virtualFS['dist/lea.md']);
+    expect(md.metaData.author).toBe('Lea Rosema');
+    expect(md.metaData.gender).toBe('female');
+    expect(md.metaData.hobbies).toEqual(['sex', 'drugs', 'rocknroll']);
+    expect(md.content).toBe(
+      '\n# Hello World!\n\nLorem ipsum dolor sit amet.\n'
+    );
+    expect(md.metaData.created).toBeDefined();
   });
 });
