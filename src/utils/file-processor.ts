@@ -34,7 +34,7 @@ export async function processFrontmatterFiles({
     inputFilePatterns.map((filePattern) => path.join(inputFolder, filePattern))
   );
   if (inputContents.length === 0) {
-    throw Error('no input files.');
+    throw new Error('no input files.');
   }
   await Promise.all(
     inputContents.map(async (md) => {

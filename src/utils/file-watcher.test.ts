@@ -1,4 +1,4 @@
-import fs, { NoParamCallback, writeFile, WriteFileOptions, promises } from 'fs';
+import fs, { promises } from 'fs';
 import { FSWatcher, watch } from 'chokidar';
 import { mocked } from 'ts-jest/utils';
 import { watchFrontmatterFiles } from './file-watcher';
