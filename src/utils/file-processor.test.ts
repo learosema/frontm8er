@@ -21,6 +21,23 @@ describe('processFrontmatterFiles tests', () => {
     mocked(fsp.writeFile).mockClear();
   });
 
+  test('processFrontmatterFiles should throw an error', async () => {
+    expect(async () => {
+      await processFrontmatterFiles({
+        inputFilePatterns: [],
+        dataFilePatterns: [
+          'test/*.yaml',
+          'test/*.json',
+          'test/*.yml',
+          'test/*.json5',
+        ],
+        data: { author: 'Lea Rosema' },
+        addCreated: false,
+        addModified: false,
+      });
+    }).toThrowError('no input files.');
+  });
+
   test('processFrontmatterFiles does the things it should do.', async () => {
     await processFrontmatterFiles({
       inputFilePatterns: ['test/*.md'],
