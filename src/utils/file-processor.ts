@@ -33,6 +33,9 @@ export async function processFrontmatterFiles({
   const inputContents: MatterParser[] = await MatterParser.fromFilePatterns(
     inputFilePatterns.map((filePattern) => path.join(inputFolder, filePattern))
   );
+  if (inputContents.length === 0) {
+    throw Error('no input files.');
+  }
   await Promise.all(
     inputContents.map(async (md) => {
       const additionalData = {

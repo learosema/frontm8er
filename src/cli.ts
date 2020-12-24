@@ -6,6 +6,7 @@ import { version } from '../package.json';
 import { watchFrontmatterFiles } from './utils/file-watcher';
 
 const KNOWN_OPTIONS = [
+  '_',
   'c',
   'add-created',
   'm',
@@ -56,7 +57,7 @@ async function main(): Promise<void> {
   let returnValue = 0;
 
   const data: Record<string, string> = {};
-  for (const [key, value] of Object.entries(data)) {
+  for (const [key, value] of Object.entries(options)) {
     if (KNOWN_OPTIONS.includes(key)) {
       continue;
     }

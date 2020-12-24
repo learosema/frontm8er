@@ -1,7 +1,9 @@
-import fs from 'fs';
+import fs, { NoParamCallback, writeFile, WriteFileOptions, promises } from 'fs';
 import { FSWatcher, watch } from 'chokidar';
 import { mocked } from 'ts-jest/utils';
 import { watchFrontmatterFiles } from './file-watcher';
+
+const origWF = promises.writeFile;
 
 jest.mock('chokidar', () => ({
   watch: jest.fn(),
@@ -15,15 +17,18 @@ type chokidarHandler = (
 
 describe('file-watcher test', () => {
   test('test watching files', async () => {
-    const watchers: Record<string, any>[] = [];
+    const virtualFS: Record<string, string> = {};
+    const watchers: chokidarHandler[] = [];
+    promises.writeFile = jest.fn();
+    mocked(promises.writeFile).mockImplementation((path, data) => {
+      virtualFS[path.toString()] = data.toString();
+      return Promise.resolve();
+    });
 
-    mocked(watch).mockImplementation((paths: string | readonly string[]) => {
+    mocked(watch).mockImplementation(() => {
       const watcher = {
         on: (_eventType: string, handler: chokidarHandler) => {
-          watchers.push({
-            paths,
-            handler,
-          });
+          watchers.push(handler);
         },
       } as Partial<FSWatcher>;
       return watcher as FSWatcher;
@@ -35,7 +40,14 @@ describe('file-watcher test', () => {
         inputFolder: 'test',
         outputFolder: 'output',
       });
-      console.log(watchers);
+      expect(watchers.length).toBe(2);
+      const [dataWatcher, inputWatcher] = watchers;
+      // trigger chokidar handlers manually
+      await dataWatcher('change', 'test/test.json');
+      await inputWatcher('change', 'test/lea.md');
     } catch (ex) {}
+
+    promises.writeFile = origWF;
+    mocked(watch).mockClear();
   });
 });
