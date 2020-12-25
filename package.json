@@ -20,7 +20,8 @@
   "files": [
     "dist/cli.js",
     "dist/frontm8er.js",
-    "dist/frontm8er.mjs"
+    "dist/frontm8er.mjs",
+    "dist/frontm8er.d.ts"
   ],
   "scripts": {
     "clean": "rm -rf dist",
