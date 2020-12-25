@@ -6,6 +6,10 @@ import { promisify } from 'util';
 
 const DATA_PATTERN = /\.(json|json5|yml|yaml)$/;
 
+export function isDataFile(fileName: string) {
+  return DATA_PATTERN.test(fileName);
+}
+
 /**
  * Resolves all files from an array of file patterns
  *
@@ -20,17 +24,14 @@ export async function readDataFiles(
   );
   const dataFiles = (await resolveDataFiles).flat();
   const dataContents = dataFiles.flat().map(async (item) => {
-    if (!DATA_PATTERN.test(item)) {
+    if (!isDataFile(item)) {
       return;
     }
     const content = await fsp.readFile(item, 'utf-8');
     if (/\.ya?ml$/.test(item)) {
       return yaml.parse(content);
     }
-    if (/\.json5?$/.test(item)) {
-      return json5.parse(content);
-    }
-    return {};
+    return json5.parse(content);
   });
   return await Promise.all(dataContents);
 }

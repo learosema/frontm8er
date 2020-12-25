@@ -2,6 +2,7 @@ import yaml from 'yaml';
 import { promises as fsp } from 'fs';
 import glob from 'glob';
 import { promisify } from 'util';
+import path from 'path';
 
 /**
  * Class for parsing a markdown file into frontmatter and content
@@ -110,10 +111,20 @@ export class MatterParser {
    *
    * @param fileName new filename; if not provided, the file is overwritten
    */
-  save(fileName?: string): Promise<void> {
+  async save(fileName?: string): Promise<void> {
     if (fileName) {
       this.fileName = fileName;
     }
-    return fsp.writeFile(this.fileName, this.toString(), 'utf8');
+    const dirName = path.dirname(this.fileName);
+    let directoryExists = true;
+    try {
+      await fsp.access(dirName);
+    } catch (ex) {
+      directoryExists = false;
+    }
+    if (!directoryExists) {
+      await fsp.mkdir(dirName, { recursive: true });
+    }
+    return await fsp.writeFile(this.fileName, this.toString(), 'utf8');
   }
 }

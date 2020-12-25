@@ -55,7 +55,7 @@ async function main(): Promise<void> {
     process.exit(0);
   }
   let returnValue = 0;
-
+  const watchMode = options.w || options.watch;
   const data: Record<string, string> = {};
   for (const [key, value] of Object.entries(options)) {
     if (KNOWN_OPTIONS.includes(key)) {
@@ -72,16 +72,19 @@ async function main(): Promise<void> {
     inputFolder: options.i || options['input-folder'],
     outputFolder: options.o || options['output-folder'],
   };
+
   try {
     await processFrontmatterFiles(params);
-    if (options.w || options.watch) {
+    if (watchMode) {
       await watchFrontmatterFiles(params);
     }
   } catch (err) {
     console.error(err.message);
     returnValue = -1;
   }
-  process.exit(returnValue);
+  if (!watchMode || returnValue < 0) {
+    process.exit(returnValue);
+  }
 }
 
 main();
