@@ -7,6 +7,9 @@ Quick and dirty tool to add data to your markdown files.
 ```sh
 npm i frontm8er -g
 
+# Display help
+frontm8er --help
+
 # Adds author field for every markdown file
 frontm8er --author="Lea Rosema" content/*.md
 
