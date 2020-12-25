@@ -4,6 +4,7 @@ import { mocked } from 'ts-jest/utils';
 import { processFrontmatterFiles } from './file-processor';
 import { MatterParser } from './matter-parser';
 
+const originalWriteFile = fsp.writeFile;
 let virtualFS: Record<string, string> = {};
 
 describe('processFrontmatterFiles tests', () => {
@@ -21,9 +22,13 @@ describe('processFrontmatterFiles tests', () => {
     mocked(fsp.writeFile).mockClear();
   });
 
-  test('processFrontmatterFiles should throw an error', async () => {
-    expect(async () => {
-      await processFrontmatterFiles({
+  afterAll(() => {
+    fsp.writeFile = originalWriteFile;
+  });
+
+  test('processFrontmatterFiles without input files should throw an error', () => {
+    return expect(
+      processFrontmatterFiles({
         inputFilePatterns: [],
         dataFilePatterns: [
           'test/*.yaml',
@@ -34,8 +39,8 @@ describe('processFrontmatterFiles tests', () => {
         data: { author: 'Lea Rosema' },
         addCreated: false,
         addModified: false,
-      });
-    }).toThrowError('no input files.');
+      })
+    ).rejects.toThrowError('no input files.');
   });
 
   test('processFrontmatterFiles does the things it should do.', async () => {
