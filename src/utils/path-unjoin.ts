@@ -7,7 +7,7 @@ import path from 'path';
  * @param prefix the prefixed path
  * @returns the file path without the prefix
  */
-export function pathUnjoin(filePath: string, prefix: string) {
+export function pathUnjoin(filePath: string, prefix: string): string {
   if (prefix === '') {
     return filePath;
   }

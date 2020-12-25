@@ -56,23 +56,21 @@ describe('file-watcher test', () => {
     ).rejects.toThrowError();
   });
 
-  test('test watching files', async () => {
-    try {
-      await watchFrontmatterFiles({
-        inputFilePatterns: ['lea.md'],
-        dataFilePatterns: ['*.*'],
-        inputFolder: 'test',
-        outputFolder: 'output',
-      });
-      expect(watchers.length).toBe(2);
-      const [dataWatcher, inputWatcher] = watchers;
-      // trigger chokidar handlers manually
-      await dataWatcher('change', 'test/test.json');
-      await dataWatcher('change', 'test/lea.md');
-      await inputWatcher('change', 'test/lea.md');
-      await dataWatcher('change', 'test/test.json');
-      await inputWatcher('change', 'test/test.json');
-    } catch (ex) {}
+  test('watchFrontmatterFiles starts 2 file system watchers', async () => {
+    await watchFrontmatterFiles({
+      inputFilePatterns: ['lea.md'],
+      dataFilePatterns: ['*.*'],
+      inputFolder: 'test',
+      outputFolder: 'output',
+    });
+    expect(watchers.length).toBe(2);
+    const [dataWatcher, inputWatcher] = watchers;
+    // trigger chokidar handlers manually
+    await dataWatcher('change', 'test/test.json');
+    await dataWatcher('change', 'test/lea.md');
+    await inputWatcher('change', 'test/lea.md');
+    await dataWatcher('change', 'test/test.json');
+    await inputWatcher('change', 'test/test.json');
     expect(Object.keys(virtualFS)).toEqual(['output/lea.md']);
     fsp.writeFile = writeFile;
     mocked(watch).mockClear();

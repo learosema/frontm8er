@@ -1,4 +1,4 @@
-import chokidar from 'chokidar';
+import chokidar, { FSWatcher } from 'chokidar';
 import path from 'path';
 
 import { isDataFile, readDataFilesToObject } from './data-parser';
@@ -15,7 +15,7 @@ export async function watchFrontmatterFiles({
   addModified = false,
   inputFolder = '',
   outputFolder = '',
-}: FileProcessorOptions) {
+}: FileProcessorOptions): Promise<FSWatcher[]> {
   if (inputFolder === outputFolder) {
     throw Error('input and output folders must be different for watch mode.');
   }

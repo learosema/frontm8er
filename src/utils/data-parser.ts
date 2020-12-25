@@ -6,7 +6,7 @@ import { promisify } from 'util';
 
 const DATA_PATTERN = /\.(json|json5|yml|yaml)$/;
 
-export function isDataFile(fileName: string) {
+export function isDataFile(fileName: string): boolean {
   return DATA_PATTERN.test(fileName);
 }
 
