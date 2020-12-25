@@ -1,4 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
 import shebang from 'rollup-plugin-preserve-shebang';
 
 export default [
@@ -8,7 +9,7 @@ export default [
       file: 'dist/cli.js',
       format: 'cjs',
     },
-    plugins: [shebang(), typescript()],
+    plugins: [shebang(), json(), typescript()],
   },
   {
     input: 'src/frontm8er.ts',

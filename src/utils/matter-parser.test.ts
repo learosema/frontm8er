@@ -79,6 +79,25 @@ describe('MatterParser parsing', () => {
     fsp.writeFile = writeFile;
   });
 
+  test('MatterParser.save saves all the things also to a non-existant path', async () => {
+    const writeFile = fsp.writeFile;
+    const access = fsp.access;
+    const mkdir = fsp.mkdir;
+    fsp.writeFile = jest.fn().mockImplementation(() => Promise.resolve());
+    fsp.access = jest.fn().mockImplementation(() => Promise.reject());
+    fsp.mkdir = jest.fn().mockImplementation(() => Promise.resolve());
+    const md = new MatterParser(
+      'test.md',
+      { author: 'Lea Rosema' },
+      'Hello World\n'
+    );
+    await md.withData({ gender: 'female' }).save('some/path/test.md');
+    expect(fsp.writeFile).toHaveBeenCalled();
+    fsp.writeFile = writeFile;
+    fsp.access = access;
+    fsp.mkdir = mkdir;
+  });
+
   test('MatterParser.fromFilePatterns can batch-read all the MatterParser files', async () => {
     const files = await MatterParser.fromFilePatterns(['test/*.md']);
     expect(files.length).toBe(1);
