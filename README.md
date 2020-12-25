@@ -17,7 +17,7 @@ frontm8er -c -m --author="Lea Rosema" content/*.md
 frontm8er data.json content/*.md
 
 # Watch mode: watch content folder, write to output folder add author and additional data.yaml to files
-frontm8er -i test -o output './**/*.md' data/data.yaml --author="Lea Rosema" --watch
+frontm8er -i content -o output './**/*.md' data/data.yaml --author="Lea Rosema" --watch
 ```
 
 ## Supported data formats
