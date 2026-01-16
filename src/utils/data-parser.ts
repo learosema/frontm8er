@@ -1,8 +1,8 @@
 import yaml from 'yaml';
 import json5 from 'json5';
 import { promises as fsp } from 'fs';
-import glob from 'glob';
-import { promisify } from 'util';
+
+import { glob } from 'node:fs/promises'
 
 const DATA_PATTERN = /\.(json|json5|yml|yaml)$/;
 
@@ -19,10 +19,13 @@ export function isDataFile(fileName: string): boolean {
 export async function readDataFiles(
   dataFilePatterns: string[]
 ): Promise<any[]> {
-  const resolveDataFiles = Promise.all(
-    dataFilePatterns.map((item) => promisify(glob)(item))
-  );
-  const dataFiles = (await resolveDataFiles).flat();
+  
+  const dataFiles = (
+    await Array.fromAsync(
+      dataFilePatterns.map(async (filePattern) => await Array.fromAsync(glob(filePattern)))
+    )
+  ).flat()
+  
   const dataContents = dataFiles.flat().map(async (item) => {
     if (!isDataFile(item)) {
       return;

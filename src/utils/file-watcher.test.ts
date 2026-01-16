@@ -1,6 +1,6 @@
 import fs, { promises as fsp } from 'fs';
 import { FSWatcher, watch } from 'chokidar';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 import { watchFrontmatterFiles } from './file-watcher';
 
 const writeFile = fsp.writeFile;
@@ -53,7 +53,7 @@ describe('file-watcher test', () => {
         inputFilePatterns: ['lea.md'],
         dataFilePatterns: ['*.*'],
       })
-    ).rejects.toThrowError();
+    ).rejects.toMatchObject(new Error('input and output folders must be different for watch mode.'));
   });
 
   test('watchFrontmatterFiles starts 2 file system watchers', async () => {

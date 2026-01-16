@@ -79,7 +79,7 @@ async function main(): Promise<void> {
       await watchFrontmatterFiles(params);
     }
   } catch (err) {
-    console.error(err.message);
+    console.error(err);
     returnValue = -1;
   }
   if (!watchMode || returnValue < 0) {

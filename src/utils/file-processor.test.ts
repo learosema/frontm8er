@@ -1,5 +1,5 @@
 import { promises as fsp } from 'fs';
-import { mocked } from 'ts-jest/utils';
+import { mocked } from 'jest-mock';
 
 import { processFrontmatterFiles } from './file-processor';
 import { MatterParser } from './matter-parser';
@@ -40,7 +40,7 @@ describe('processFrontmatterFiles tests', () => {
         addCreated: false,
         addModified: false,
       })
-    ).rejects.toThrowError('no input files.');
+    ).rejects.toMatchObject(new Error('no input files.'));
   });
 
   test('processFrontmatterFiles does the things it should do.', async () => {

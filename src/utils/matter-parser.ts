@@ -1,8 +1,6 @@
 import yaml from 'yaml';
-import { promises as fsp } from 'fs';
-import glob from 'glob';
-import { promisify } from 'util';
-import path from 'path';
+import { access, glob, mkdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
 
 /**
  * Class for parsing a markdown file into frontmatter and content
@@ -28,7 +26,7 @@ export class MatterParser {
    * @returns the parser instance
    */
   static async fromFile(fileName: string): Promise<MatterParser> {
-    const content = await fsp.readFile(fileName, 'utf8');
+    const content = await readFile(fileName, 'utf8');
     return MatterParser.fromString(content, fileName);
   }
 
@@ -68,13 +66,8 @@ export class MatterParser {
   static async fromFilePatterns(
     filePatterns: string[]
   ): Promise<MatterParser[]> {
-    const resolveInputFiles = Promise.all(
-      filePatterns.map(
-        (item: string) => promisify(glob)(item) as Promise<string[]>
-      )
-    );
+    const inputFiles = (await Array.fromAsync(filePatterns.map(async (pattern) => await Array.fromAsync(glob(pattern))))).flat()
 
-    const inputFiles = (await resolveInputFiles).flat();
     return await Promise.all(
       inputFiles
         .filter((fileName) => fileName.endsWith('.md'))
@@ -118,13 +111,13 @@ export class MatterParser {
     const dirName = path.dirname(this.fileName);
     let directoryExists = true;
     try {
-      await fsp.access(dirName);
+      await access(dirName);
     } catch (ex) {
       directoryExists = false;
     }
     if (!directoryExists) {
-      await fsp.mkdir(dirName, { recursive: true });
+      await mkdir(dirName, { recursive: true });
     }
-    return await fsp.writeFile(this.fileName, this.toString(), 'utf8');
+    return await writeFile(this.fileName, this.toString(), 'utf8');
   }
 }
