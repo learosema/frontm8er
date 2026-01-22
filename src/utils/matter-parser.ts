@@ -11,7 +11,7 @@ export class MatterParser {
   public metaData: Record<string, any>;
   public content: string;
   public eol: string;
-  
+
   /**
    * Creates a markdown file instance
    * @param fileName the file name
@@ -23,7 +23,7 @@ export class MatterParser {
     fileName: string,
     metaData: Record<string, any>,
     content: string,
-    eol = '\n'
+    eol = '\n',
   ) {
     this.fileName = fileName;
     this.metaData = metaData;
@@ -36,9 +36,9 @@ export class MatterParser {
    * @param fileName the file name
    * @returns the parser instance
    */
-  static async fromFile(fileName: string): Promise<MatterParser> {
+  static async fromFile(fileName: string, extractTitle = false): Promise<MatterParser> {
     const content = await readFile(fileName, 'utf8');
-    return MatterParser.fromString(content, fileName);
+    return MatterParser.fromString(content, fileName, extractTitle);
   }
 
   /**
@@ -47,13 +47,21 @@ export class MatterParser {
    * @param fileName the fileName to be used when saved
    * @returns {MatterParser} the parser instance
    */
-  static fromString(content = '', fileName = 'output.md'): MatterParser {
+  static fromString(content = '', fileName = 'output.md', extractTitle = false): MatterParser {
     // determine line endings by looking at the first appearance of \n or \r\n
     const eol = (content.match(/\n|\r\n/) || ['\n'])[0];
+    const marker = '---' + eol;
+    const metaData: Record<string, any> = {};
+
+    if (extractTitle) {
+      const title = content.match(/^# (.*)$/m)?.[1];
+      if (title) {
+        metaData.title = title;
+      }
+    }
+
     // normalize line endings in case of mixed LF/CRLF
     let normalizedContent = content.replace(/\n|\r\n/g, eol);
-    const marker = '---' + eol;
-    const metaData = {};
     if (normalizedContent.startsWith(marker)) {
       const frontMatterEnd = normalizedContent.indexOf(marker, marker.length);
       const frontMatter = normalizedContent.slice(
@@ -75,14 +83,15 @@ export class MatterParser {
    * @returns Array of MatterParser instances
    */
   static async fromFilePatterns(
-    filePatterns: string[]
+    filePatterns: string[],
+    extractTitle = false
   ): Promise<MatterParser[]> {
     const inputFiles = (await Array.fromAsync(filePatterns.map(async (pattern) => await Array.fromAsync(glob(pattern))))).flat()
 
     return await Promise.all(
       inputFiles
         .filter((fileName) => fileName.endsWith('.md'))
-        .map((fileName) => MatterParser.fromFile(fileName))
+        .map((fileName) => MatterParser.fromFile(fileName, extractTitle))
     );
   }
 

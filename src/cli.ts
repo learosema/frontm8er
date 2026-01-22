@@ -7,6 +7,8 @@ import { watchFrontmatterFiles } from './utils/file-watcher.ts';
 
 const KNOWN_OPTIONS = [
   '_',
+  't',
+  'add-title',
   'c',
   'add-created',
   'm',
@@ -31,6 +33,7 @@ function displayHelp(): void {
     '  -v, --version         display version',
     '  -i, --input-folder    specify input folder',
     '  -o, --output-folder   specify output folder',
+    '  -t, --add-title       takes title from h1 heading and adds it to the frontmatter',
     '  -c, --add-created     takes created time from file and adds it to the frontmatter',
     '  -m, --add-modified    takes modified time from file and adds it to the frontmatter',
     '  -w, --watch           run the whole thing in watch mode',

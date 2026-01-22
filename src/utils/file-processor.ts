@@ -11,6 +11,7 @@ export type FileProcessorOptions = {
   data?: Record<string, any>;
   addCreated?: boolean;
   addModified?: boolean;
+  addTitle?: boolean;
   inputFolder?: string;
   outputFolder?: string;
 };
@@ -24,6 +25,7 @@ export async function processFrontmatterFiles({
   data = {},
   addCreated = false,
   addModified = false,
+  addTitle = false,
   inputFolder = '',
   outputFolder = '',
 }: FileProcessorOptions): Promise<void> {
@@ -31,7 +33,8 @@ export async function processFrontmatterFiles({
     dataFilePatterns.map((filePattern) => path.join(inputFolder, filePattern))
   );
   const inputContents: MatterParser[] = await MatterParser.fromFilePatterns(
-    inputFilePatterns.map((filePattern) => path.join(inputFolder, filePattern))
+    inputFilePatterns.map((filePattern) => path.join(inputFolder, filePattern)),
+    addTitle
   );
   if (inputContents.length === 0) {
     throw new Error('no input files.');

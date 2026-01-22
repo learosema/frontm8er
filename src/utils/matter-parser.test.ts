@@ -66,6 +66,19 @@ describe('MatterParser parsing', () => {
     expect(md.toString()).toBe(mdString);
   });
 
+  test('MatterParser.fromString extracts title from markdown content', () => {
+    const content = '# My Title\n\nContent here.\n';
+    const md = MatterParser.fromString(content, 'test.md', true);
+    expect(md.metaData.title).toBe('My Title');
+  });
+
+  test('MatterParser.fromString won\'t set the title property if no title is present', () => {
+    const content = 'Content here.\n';
+    const md = MatterParser.fromString(content, 'test.md', true);
+    expect(md.metaData.title).toBeUndefined();
+  });
+
+
   test('MatterParser.save saves all the things', async () => {
     const writeFile = fsp.writeFile;
     fsp.writeFile = jest.fn().mockImplementation(() => Promise.resolve());
