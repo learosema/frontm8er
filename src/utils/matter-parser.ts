@@ -6,6 +6,12 @@ import path from 'node:path';
  * Class for parsing a markdown file into frontmatter and content
  */
 export class MatterParser {
+
+  public fileName: string;
+  public metaData: Record<string, any>;
+  public content: string;
+  public eol: string;
+  
   /**
    * Creates a markdown file instance
    * @param fileName the file name
@@ -14,11 +20,16 @@ export class MatterParser {
    * @param eol the line-ending style used (\n or \r\n)
    */
   constructor(
-    public fileName: string,
-    public metaData: Record<string, any>,
-    public content: string,
-    public eol = '\n'
-  ) {}
+    fileName: string,
+    metaData: Record<string, any>,
+    content: string,
+    eol = '\n'
+  ) {
+    this.fileName = fileName;
+    this.metaData = metaData;
+    this.content = content;
+    this.eol = eol;
+  }
 
   /**
    * Read file

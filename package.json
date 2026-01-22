@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "clean": "rm -rf dist",
-    "start": "ts-node -r esm src/cli.ts --help",
+    "start": "ts-node src/cli.ts --help",
     "build:types": "tsc -t esnext --esModuleInterop --allowSyntheticDefaultImports --resolveJsonModule --moduleResolution node -d --emitDeclarationOnly --outFile dist/frontm8er.d.ts src/frontm8er.ts",
     "build:bundles": "rollup -c rollup.config.js",
     "build": "npm run build:types -s && npm run build:bundles -s",

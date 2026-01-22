@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import parseArgs from 'minimist';
 
-import { processFrontmatterFiles } from './frontm8er';
-import { version } from '../package.json';
-import { watchFrontmatterFiles } from './utils/file-watcher';
+import { processFrontmatterFiles } from './frontm8er.ts';
+import packageJson from '../package.json' with { type: 'json' };
+import { watchFrontmatterFiles } from './utils/file-watcher.ts';
 
 const KNOWN_OPTIONS = [
   '_',
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
     process.exit(0);
   }
   if (options.version || options.v) {
-    console.info(version);
+    console.info(packageJson.version);
     process.exit(0);
   }
   if (!options) {

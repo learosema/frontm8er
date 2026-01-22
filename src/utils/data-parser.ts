@@ -1,6 +1,6 @@
 import yaml from 'yaml';
 import json5 from 'json5';
-import { promises as fsp } from 'fs';
+import { readFile } from 'node:fs/promises';
 
 import { glob } from 'node:fs/promises'
 
@@ -30,7 +30,7 @@ export async function readDataFiles(
     if (!isDataFile(item)) {
       return;
     }
-    const content = await fsp.readFile(item, 'utf-8');
+    const content = await readFile(item, 'utf-8');
     if (/\.ya?ml$/.test(item)) {
       return yaml.parse(content);
     }

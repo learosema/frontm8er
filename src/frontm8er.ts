@@ -1,7 +1,7 @@
-import { readDataFiles } from './utils/data-parser';
-import { processFrontmatterFiles } from './utils/file-processor';
-import { watchFrontmatterFiles } from './utils/file-watcher';
-import { MatterParser } from './utils/matter-parser';
+import { readDataFiles } from './utils/data-parser.ts';
+import { processFrontmatterFiles } from './utils/file-processor.ts';
+import { watchFrontmatterFiles } from './utils/file-watcher.ts';
+import { MatterParser } from './utils/matter-parser.ts';
 
 export {
   MatterParser,

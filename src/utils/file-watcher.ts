@@ -1,11 +1,11 @@
 import chokidar, { FSWatcher } from 'chokidar';
-import path from 'path';
+import path from 'node:path';
 
-import { isDataFile, readDataFilesToObject } from './data-parser';
-import { FileProcessorOptions } from './file-processor';
-import { getFileTimes } from './file-times';
-import { MatterParser } from './matter-parser';
-import { pathUnjoin } from './path-unjoin';
+import { isDataFile, readDataFilesToObject } from './data-parser.ts';
+import type { FileProcessorOptions } from './file-processor.ts';
+import { getFileTimes } from './file-times.ts';
+import { MatterParser } from './matter-parser.ts';
+import { pathUnjoin } from './path-unjoin.ts';
 
 export async function watchFrontmatterFiles({
   inputFilePatterns,

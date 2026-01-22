@@ -1,4 +1,4 @@
-import { promises as fsp } from 'fs';
+import { stat } from 'node:fs/promises';
 
 export async function getFileTimes(
   fileName: string,
@@ -9,7 +9,7 @@ export async function getFileTimes(
   if (!addCreated && !addModified) {
     return result;
   }
-  const stats = await fsp.stat(fileName);
+  const stats = await stat(fileName);
   if (addCreated) {
     result.created = stats.birthtime.toISOString();
   }

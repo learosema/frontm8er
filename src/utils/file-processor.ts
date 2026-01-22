@@ -1,9 +1,9 @@
-import path from 'path';
+import path from 'node:path';
 
-import { readDataFilesToObject } from './data-parser';
-import { MatterParser } from './matter-parser';
-import { getFileTimes } from './file-times';
-import { pathUnjoin } from './path-unjoin';
+import { readDataFilesToObject } from './data-parser.ts';
+import { MatterParser } from './matter-parser.ts';
+import { getFileTimes } from './file-times.ts';
+import { pathUnjoin } from './path-unjoin.ts';
 
 export type FileProcessorOptions = {
   inputFilePatterns: string[];
