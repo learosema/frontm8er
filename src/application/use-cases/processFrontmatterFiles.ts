@@ -1,7 +1,7 @@
 import path from 'node:path';
 
 import { getFileTimes } from '../../domain/file-times.ts';
-import { pathUnjoin } from '../../domain/value-objects/path-unjoin.ts';
+import { pathUnjoin } from '../../shared/path-unjoin.ts';
 import type { IParser, IMatterDocument } from '../ports/IParser';
 import type { ILogger } from '../ports/ILogger';
 

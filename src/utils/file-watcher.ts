@@ -4,7 +4,7 @@ import path from 'node:path';
 import { isDataFile } from './data-parser.ts';
 import type { FileProcessorOptions } from '../application/use-cases/processFrontmatterFiles.ts';
 import { getFileTimes } from '../domain/file-times.ts';
-import { pathUnjoin } from '../domain/value-objects/path-unjoin.ts';
+import { pathUnjoin } from '../shared/path-unjoin.ts';
 import type { IParser } from '../application/ports/IParser';
 import type { ILogger } from '../application/ports/ILogger';
 import { NodeParserAdapter } from '../infrastructure/parsers/NodeParserAdapter.ts';
