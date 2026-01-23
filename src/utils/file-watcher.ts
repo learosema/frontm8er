@@ -3,14 +3,19 @@ import path from 'node:path';
 
 import { isDataFile } from './data-parser.ts';
 import type { FileProcessorOptions } from '../application/use-cases/processFrontmatterFiles.ts';
-import { getFileTimes } from '../domain/file-times.ts';
 import { pathUnjoin } from '../shared/path-unjoin.ts';
 import type { IParser } from '../application/ports/IParser';
 import type { ILogger } from '../application/ports/ILogger';
+import type { IFileTimesProvider } from '../application/ports/IFileTimesProvider';
 import { NodeParserAdapter } from '../infrastructure/parsers/NodeParserAdapter.ts';
 import { ConsoleLogger } from '../infrastructure/logger/ConsoleLogger.ts';
+import { NodeFileTimesProvider } from '../infrastructure/file-times/NodeFileTimesProvider.ts';
 
-export function makeWatchFrontmatterFiles(parser: IParser, logger: ILogger) {
+export function makeWatchFrontmatterFiles(
+  parser: IParser,
+  logger: ILogger,
+  fileTimesProvider: IFileTimesProvider
+) {
   return async function watchFrontmatterFiles({
   inputFilePatterns,
   dataFilePatterns,
@@ -47,7 +52,7 @@ export function makeWatchFrontmatterFiles(parser: IParser, logger: ILogger) {
     const newData = {
       ...fileData,
       ...data,
-      ...(await getFileTimes(filePath, addCreated, addModified)),
+      ...(await fileTimesProvider.getFileTimes(filePath, addCreated, addModified)),
     };
     const newFileName = path.join(outputFolder, pathUnjoin(filePath, inputFolder));
     const md = await parser.fromFile(filePath);
@@ -60,6 +65,6 @@ export function makeWatchFrontmatterFiles(parser: IParser, logger: ILogger) {
 
 // default wired function for convenience/backwards-compatibility
 export async function watchFrontmatterFiles(options: FileProcessorOptions): Promise<FSWatcher[]> {
-  const fn = makeWatchFrontmatterFiles(NodeParserAdapter, ConsoleLogger);
+  const fn = makeWatchFrontmatterFiles(NodeParserAdapter, ConsoleLogger, NodeFileTimesProvider);
   return fn(options);
 }

@@ -1,8 +1,9 @@
 import path from 'node:path';
 
-import { getFileTimes } from '../../domain/file-times.ts';
+import type { IFileTimesProvider } from '../ports/IFileTimesProvider';
 import { pathUnjoin } from '../../shared/path-unjoin.ts';
-import type { IParser, IMatterDocument } from '../ports/IParser';
+import type { IParser } from '../ports/IParser';
+import type { FileEntity } from '../../domain/entities/FileEntity';
 import type { ILogger } from '../ports/ILogger';
 
 export type FileProcessorOptions = {
@@ -20,7 +21,11 @@ export type FileProcessorOptions = {
  * Create a `processFrontmatterFiles` use-case bound to a specific `IParser`.
  * This enables dependency injection for testing or alternative adapters.
  */
-export function makeProcessFrontmatterFiles(parser: IParser, logger: ILogger) {
+export function makeProcessFrontmatterFiles(
+  parser: IParser,
+  logger: ILogger,
+  fileTimesProvider: IFileTimesProvider
+) {
   return async function processFrontmatterFiles({
     inputFilePatterns,
     dataFilePatterns,
@@ -42,11 +47,11 @@ export function makeProcessFrontmatterFiles(parser: IParser, logger: ILogger) {
       throw new Error('no input files.');
     }
     await Promise.all(
-      inputContents.map(async (md: IMatterDocument) => {
+      inputContents.map(async (md: FileEntity) => {
         const additionalData = {
           ...fileData,
           ...data,
-          ...(await getFileTimes(md.fileName, addCreated, addModified)),
+          ...(await fileTimesProvider.getFileTimes(md.fileName, addCreated, addModified)),
         };
         logger.info(`processing ${md.fileName}`);
         const outputFile = path.join(outputFolder, pathUnjoin(md.fileName, inputFolder));

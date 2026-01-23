@@ -1,8 +1,9 @@
 import { readDataFilesToObject } from '../../../src/utils/data-parser.ts';
 import { MatterParser } from '../../../src/utils/matter-parser.ts';
-import type { IParser, IMatterDocument } from '../../../src/application/ports/IParser';
+import type { IParser } from '../../../src/application/ports/IParser';
+import type { FileEntity } from '../../../src/domain/entities/FileEntity';
 
-class MatterDocumentAdapter implements IMatterDocument {
+class MatterDocumentAdapter implements FileEntity {
   private inner: MatterParser;
   constructor(m: MatterParser) {
     this.inner = m;
@@ -19,7 +20,7 @@ class MatterDocumentAdapter implements IMatterDocument {
   get eol() {
     return this.inner.eol;
   }
-  withData(data: Record<string, any>): IMatterDocument {
+  withData(data: Record<string, any>): FileEntity {
     return new MatterDocumentAdapter(this.inner.withData(data));
   }
   async save(fileName?: string): Promise<void> {
