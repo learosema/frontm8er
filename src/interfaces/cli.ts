@@ -2,9 +2,11 @@ import { NodeParserAdapter } from '../infrastructure/parsers/NodeParserAdapter.t
 import { makeProcessFrontmatterFiles } from '../application/use-cases/processFrontmatterFiles.ts';
 import { ConsoleLogger } from '../infrastructure/logger/ConsoleLogger.ts';
 import { NodeFileTimesProvider } from '../infrastructure/file-times/NodeFileTimesProvider.ts';
+import { NodeFileRepository } from '../infrastructure/file-repository/NodeFileRepository.ts';
 
 export const processFrontmatterFiles = makeProcessFrontmatterFiles(
 	NodeParserAdapter,
 	ConsoleLogger,
-	NodeFileTimesProvider
+	NodeFileTimesProvider,
+	NodeFileRepository
 );

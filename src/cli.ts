@@ -82,8 +82,17 @@ async function main(): Promise<void> {
       await watchFrontmatterFiles(params);
     }
   } catch (err) {
-    console.error(err);
-    returnValue = -1;
+    // Prefer a clean, user-facing message for the common "no input files" case.
+    if (err instanceof Error) {
+      if (/no input files/i.test(err.message)) {
+        console.error('no input files');
+      } else {
+        console.error(err.message);
+      }
+    } else {
+      console.error(String(err));
+    }
+    returnValue = 1;
   }
   if (!watchMode || returnValue < 0) {
     process.exit(returnValue);
