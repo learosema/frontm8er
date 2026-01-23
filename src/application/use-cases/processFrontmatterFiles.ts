@@ -1,6 +1,7 @@
 import path from 'node:path';
 
 import type { IFileTimesProvider } from '../ports/IFileTimesProvider';
+import type { IDataFilesProvider } from '../ports/IDataFilesProvider';
 import type { IFileRepository } from '../ports/IFileRepository';
 import { pathUnjoin } from '../../shared/path-unjoin.ts';
 import type { IParser } from '../ports/IParser';
@@ -26,7 +27,8 @@ export function makeProcessFrontmatterFiles(
   parser: IParser,
   logger: ILogger,
   fileTimesProvider: IFileTimesProvider,
-  fileRepository: IFileRepository
+  fileRepository: IFileRepository,
+  dataFilesProvider: IDataFilesProvider
 ) {
   return async function processFrontmatterFiles({
     inputFilePatterns,
@@ -38,7 +40,7 @@ export function makeProcessFrontmatterFiles(
     inputFolder = '',
     outputFolder = '',
   }: FileProcessorOptions): Promise<void> {
-    const fileData: Record<string, any> = await parser.readDataFilesToObject(
+    const fileData: Record<string, any> = await dataFilesProvider.readDataFilesToObject(
       dataFilePatterns.map((filePattern) => path.join(inputFolder, filePattern))
     );
     const inputContents = await parser.fromFilePatterns(

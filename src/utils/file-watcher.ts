@@ -7,9 +7,11 @@ import { pathUnjoin } from '../shared/path-unjoin.ts';
 import type { IParser } from '../application/ports/IParser';
 import type { ILogger } from '../application/ports/ILogger';
 import type { IFileTimesProvider } from '../application/ports/IFileTimesProvider';
+import type { IDataFilesProvider } from '../application/ports/IDataFilesProvider';
 import { NodeParserAdapter } from '../infrastructure/parsers/NodeParserAdapter.ts';
 import { ConsoleLogger } from '../infrastructure/logger/ConsoleLogger.ts';
 import { NodeFileTimesProvider } from '../infrastructure/file-times/NodeFileTimesProvider.ts';
+import { NodeDataFilesProvider } from '../infrastructure/data/NodeDataFilesProvider.ts';
 import { NodeFileRepository } from '../infrastructure/file-repository/NodeFileRepository.ts';
 import type { IFileRepository } from '../application/ports/IFileRepository';
 
@@ -17,7 +19,8 @@ export function makeWatchFrontmatterFiles(
   parser: IParser,
   logger: ILogger,
   fileTimesProvider: IFileTimesProvider,
-  fileRepository: IFileRepository
+  fileRepository: IFileRepository,
+  dataFilesProvider: IDataFilesProvider
 ) {
   return async function watchFrontmatterFiles({
   inputFilePatterns,
@@ -37,7 +40,7 @@ export function makeWatchFrontmatterFiles(
   const prefixedDataFilePatterns = dataFilePatterns.map((pattern) =>
     path.join(inputFolder, pattern)
   );
-  let fileData = await parser.readDataFilesToObject(prefixedDataFilePatterns);
+  let fileData = await dataFilesProvider.readDataFilesToObject(prefixedDataFilePatterns);
   const inputWatcher = chokidar.watch(prefixedInputFilePatterns);
   const dataWatcher = chokidar.watch(prefixedDataFilePatterns);
   dataWatcher.on('all', async (eventName, filePath) => {
@@ -45,7 +48,7 @@ export function makeWatchFrontmatterFiles(
       return;
     }
     logger.info(`[data ] (${eventName}): ${filePath}`);
-    fileData = await parser.readDataFilesToObject(prefixedDataFilePatterns);
+    fileData = await dataFilesProvider.readDataFilesToObject(prefixedDataFilePatterns);
   });
   inputWatcher.on('all', async (eventName, filePath) => {
     if (!filePath.endsWith('.md')) {
@@ -73,7 +76,8 @@ export async function watchFrontmatterFiles(options: FileProcessorOptions): Prom
     NodeParserAdapter,
     ConsoleLogger,
     NodeFileTimesProvider,
-    NodeFileRepository
+    NodeFileRepository,
+    NodeDataFilesProvider
   );
   return fn(options);
 }
