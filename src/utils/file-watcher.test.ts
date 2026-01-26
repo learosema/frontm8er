@@ -1,7 +1,7 @@
 import fs, { promises as fsp } from 'fs';
 import { FSWatcher, watch } from 'chokidar';
 import { mocked } from 'jest-mock';
-import { watchFrontmatterFiles } from './file-watcher';
+import { watchFrontmatterFiles } from '../interfaces/index';
 
 const writeFile = fsp.writeFile;
 const access = fsp.access;

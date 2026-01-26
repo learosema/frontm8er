@@ -1,4 +1,4 @@
-import { pathUnjoin } from './path-unjoin';
+import { pathUnjoin } from '../shared/path-unjoin.ts';
 
 describe('path.unjoin tests', () => {
   test('pathUnjoin with linux-style path without trailing slash', () => {

@@ -1,4 +1,4 @@
-import { getFileTimes } from './file-times';
+import { getFileTimes } from '../domain/file-times.ts';
 
 const ISO_8601_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 

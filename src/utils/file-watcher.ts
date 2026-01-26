@@ -1,13 +1,28 @@
 import chokidar, { FSWatcher } from 'chokidar';
 import path from 'node:path';
 
-import { isDataFile, readDataFilesToObject } from './data-parser.ts';
-import type { FileProcessorOptions } from './file-processor.ts';
-import { getFileTimes } from './file-times.ts';
-import { MatterParser } from './matter-parser.ts';
-import { pathUnjoin } from './path-unjoin.ts';
+import { isDataFile } from './data-parser.ts';
+import type { FileProcessorOptions } from '../application/use-cases/processFrontmatterFiles.ts';
+import { pathUnjoin } from '../shared/path-unjoin.ts';
+import type { IParser } from '../application/ports/IParser';
+import type { ILogger } from '../application/ports/ILogger';
+import type { IFileTimesProvider } from '../application/ports/IFileTimesProvider';
+import type { IDataFilesProvider } from '../application/ports/IDataFilesProvider';
+import { NodeParserAdapter } from '../infrastructure/parsers/NodeParserAdapter.ts';
+import { ConsoleLogger } from '../infrastructure/logger/ConsoleLogger.ts';
+import { NodeFileTimesProvider } from '../infrastructure/file-times/NodeFileTimesProvider.ts';
+import { NodeDataFilesProvider } from '../infrastructure/data/NodeDataFilesProvider.ts';
+import { NodeFileRepository } from '../infrastructure/file-repository/NodeFileRepository.ts';
+import type { IFileRepository } from '../application/ports/IFileRepository';
 
-export async function watchFrontmatterFiles({
+export function makeWatchFrontmatterFiles(
+  parser: IParser,
+  logger: ILogger,
+  fileTimesProvider: IFileTimesProvider,
+  fileRepository: IFileRepository,
+  dataFilesProvider: IDataFilesProvider
+) {
+  return async function watchFrontmatterFiles({
   inputFilePatterns,
   dataFilePatterns,
   data = {},
@@ -25,33 +40,44 @@ export async function watchFrontmatterFiles({
   const prefixedDataFilePatterns = dataFilePatterns.map((pattern) =>
     path.join(inputFolder, pattern)
   );
-
-  let fileData = await readDataFilesToObject(prefixedDataFilePatterns);
+  let fileData = await dataFilesProvider.readDataFilesToObject(prefixedDataFilePatterns);
   const inputWatcher = chokidar.watch(prefixedInputFilePatterns);
   const dataWatcher = chokidar.watch(prefixedDataFilePatterns);
   dataWatcher.on('all', async (eventName, filePath) => {
     if (!isDataFile(filePath)) {
       return;
     }
-    console.info(`[data ] (${eventName}): ${filePath}`);
-    fileData = await readDataFilesToObject(prefixedDataFilePatterns);
+    logger.info(`[data ] (${eventName}): ${filePath}`);
+    fileData = await dataFilesProvider.readDataFilesToObject(prefixedDataFilePatterns);
   });
   inputWatcher.on('all', async (eventName, filePath) => {
     if (!filePath.endsWith('.md')) {
       return;
     }
-    console.info(`[input] (${eventName}): ${filePath}`);
+    logger.info(`[input] (${eventName}): ${filePath}`);
     const newData = {
       ...fileData,
       ...data,
-      ...(await getFileTimes(filePath, addCreated, addModified)),
+      ...(await fileTimesProvider.getFileTimes(filePath, addCreated, addModified)),
     };
-    const newFileName = path.join(
-      outputFolder,
-      pathUnjoin(filePath, inputFolder)
-    );
-    const md = await MatterParser.fromFile(filePath);
-    md.withData(newData).save(newFileName);
+    const newFileName = path.join(outputFolder, pathUnjoin(filePath, inputFolder));
+    const md = await parser.fromFile(filePath);
+    const updated = md.withData(newData);
+    await fileRepository.save(updated, newFileName);
   });
   return [dataWatcher, inputWatcher];
+}
+
+}
+
+// default wired function for convenience/backwards-compatibility
+export async function watchFrontmatterFiles(options: FileProcessorOptions): Promise<FSWatcher[]> {
+  const fn = makeWatchFrontmatterFiles(
+    NodeParserAdapter,
+    ConsoleLogger,
+    NodeFileTimesProvider,
+    NodeFileRepository,
+    NodeDataFilesProvider
+  );
+  return fn(options);
 }

@@ -1,7 +1,7 @@
 import { promises as fsp } from 'fs';
 import { mocked } from 'jest-mock';
 
-import { processFrontmatterFiles } from './file-processor';
+import { processFrontmatterFiles } from '../interfaces/cli';
 import { MatterParser } from './matter-parser';
 
 const originalWriteFile = fsp.writeFile;
